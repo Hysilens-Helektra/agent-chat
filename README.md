@@ -55,6 +55,18 @@ You can tell each agent: “Test the agent-chat tool” to experience its functi
 
 After that, you can proceed with normal usage!
 
+#### Recommendation
+
+Add or modify the following in `~/.pi/agent/settings.json`:
+
+```json
+{
+  "steeringMode": "all"
+}
+```
+
+This allows the backlog message queue to be flushed/sent all at once.
+
 #### Optional Environment Variables
 
 If you prefer not to clone into `$HOME`, or want to customize the port:
