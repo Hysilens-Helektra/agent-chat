@@ -59,9 +59,13 @@ function drawFrame(p) {
 		paint(90, sep),
 		paint(90, sep),
 	];
+	// Physical rows the frame occupies: the terminal wraps long lines, and the
+	// redraw moves up by rows, so count wrapped rows (ANSI color codes measure 0).
+	const cols = process.stdout.columns || 80;
+	const rows = (s) => Math.max(1, Math.ceil(s.replace(/\x1b\[[0-9;]*m/g, "").length / cols));
 	const body = lines.map((l) => `\x1b[2K${l}`).join("\n") + "\n";
 	process.stdout.write(p.drawn ? `\x1b[${p.drawn}A${body}` : body);
-	p.drawn = lines.length;
+	p.drawn = lines.reduce((a, l) => a + rows(l), 0);
 }
 
 function send(sock, obj) {

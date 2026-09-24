@@ -13,8 +13,10 @@ const PORT = 41799;
 const serverPath = join(dirname(fileURLToPath(import.meta.url)), "server.mjs");
 let proc;
 
-function client() {
-	const sock = net.connect({ host: "127.0.0.1", port: PORT });
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function client(port = PORT) {
+	const sock = net.connect({ host: "127.0.0.1", port });
 	sock.setEncoding("utf8");
 	const queue = [];
 	const waiters = [];
@@ -60,7 +62,7 @@ test.before(async () => {
 
 test.after(() => proc?.kill());
 
-test("register / list / send with acks / presence", async () => {
+test("register / list / send with acks / presence", { timeout: 30000 }, async () => {
 	const a = client();
 	const b = client();
 
@@ -171,4 +173,55 @@ test("register / list / send with acks / presence", async () => {
 	assert.deepEqual(await a.next(), { type: "sent", ok: [], unread: [], failed: ["ghost"], rid: 14 });
 
 	a.sock.end();
+});
+
+// The TTY frame is redrawn in place by moving the cursor up. The move count
+// must equal the frame's PHYSICAL row count (terminal wraps long lines), not
+// its logical line count, or old frame fragments survive the redraw.
+test("TTY redraw moves up by physical (wrapped) rows, not logical lines", { timeout: 15000 }, async () => {
+	const TPORT = 41798;
+	const tproc = spawn(process.execPath, [serverPath], {
+		env: { ...process.env, AGENT_CHAT_PORT: String(TPORT), AGENT_CHAT_FORCE_TTY: "1" },
+		stdio: ["ignore", "pipe", "ignore"],
+	});
+	try {
+		const out = [];
+		tproc.stdout.on("data", (c) => out.push(c));
+		for (let i = 0; !Buffer.concat(out).toString().includes("listening"); i++) {
+			if (i > 100) throw new Error("TTY test server did not start");
+			await sleep(20);
+		}
+		const a = client(TPORT);
+		const b = client(TPORT);
+		a.send({ type: "register", pid: 2001 }, 1);
+		await a.next();
+		b.send({ type: "register", pid: 2002 }, 2);
+		await b.next();
+		await a.next(); // presence online
+
+		// Frame = 9 logical lines; a 200-char body wraps to ceil(200/80)=3 rows
+		// (piped stdout has no columns, so the 80-col fallback applies).
+		a.send({ type: "send", targets: ["agent[2002]"], text: "x".repeat(200) }, 3);
+		const m = await b.next();
+		b.send({ type: "ack", mid: m.mid, stage: "buffered" });
+		b.send({ type: "ack", mid: m.mid, stage: "delivered" });
+		assert.deepEqual(await a.next(), { type: "sent", ok: ["agent[2002]"], unread: [], failed: [], rid: 3 });
+
+		// Short text: every line fits, frame is 9 physical rows.
+		a.send({ type: "send", targets: ["agent[2002]"], text: "hi" }, 4);
+		const m2 = await b.next();
+		b.send({ type: "ack", mid: m2.mid, stage: "delivered" });
+		assert.deepEqual(await a.next(), { type: "sent", ok: ["agent[2002]"], unread: [], failed: [], rid: 4 });
+		await sleep(100); // let the last stdout writes drain
+
+		const ups = [...Buffer.concat(out).toString().matchAll(/\x1b\[(\d+)A/g)].map((x) => Number(x[1]));
+		// Each message's initial frame has drawn=0 (printed below the previous
+		// frame); only ack redraws move up, by that frame's physical rows:
+		// long: +11 (buffered), +11 (delivered); short: +9 (delivered).
+		assert.deepEqual(ups, [11, 11, 9]);
+		a.sock.end();
+		b.sock.end();
+	} finally {
+		tproc.kill();
+	}
 });
