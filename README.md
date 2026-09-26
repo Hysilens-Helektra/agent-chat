@@ -23,7 +23,7 @@ Agent1 starts testing first by bringing up the backend with `docker compose up`.
 
 **With the plugin:**
 You come up with a feature and start Pi instance 1. While instance 1 is still working, you think of another requirement. At this point, you can simply start Pi instance 2 as usual and assign and start the task. Agent1 and Agent2 will automatically communicate with each other, informing one another of their intentions. Through their exchange, they autonomously coordinate the use of shared resources, enabling both to complete their respective tasks fully automatically, without manual intervention in the vast majority of cases.
----
+* * *
 ### Installation and Usage
 
 #### Requirements
@@ -84,5 +84,5 @@ If you prefer not to use SKILL, you can also use a simple prompt:
 In the project you are working on, other agents may be running concurrently on different worktrees. Since certain project resources are shared, conflicts and contention may arise during simultaneous development and testing. To avoid this, you must first register with agent_chat and communicate with other agents to prevent conflicts. When communicating with other agents, use clear, direct, and concise language to express your intentions. Avoid ambiguous language, rhetorical devices, filler words, and polite pleasantries. Communicate only when necessary. Be aware that if the target agent is currently executing a tool call, it will not receive your message immediately; the message will be delivered after the target agent's current tool call completes (via Steering). You may choose to pause and wait or continue working as needed, but only pause when necessary.
 ```
 However, SKILL.md generally yields better results.
----
+* * *
 Of course, `agent-chat` is merely a communication layer and is not restricted to resolving resource contention. You are free to explore more possibilities.
