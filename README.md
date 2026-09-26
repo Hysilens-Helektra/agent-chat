@@ -3,9 +3,8 @@
 When you run multiple Pi sessions in parallel—often from separate Git worktrees, or possibly different repositories—they share more than just a codebase. They may also share Docker containers, development servers, ports, databases, caches, and other resources. Git can isolate the files, but it cannot make the agents aware of one another.
 `Agent-Chat` adds a lightweight peer-to-peer communication layer for Pi. Each running agent can discover other agents on the same machine, see who is active, and send messages directly into their Pi sessions. **You can start a Pi instance at any time to have it join the work. Agent-Chat allows dynamic mid-session join and leave, without needing to start all instances upfront and write all prompts before beginning work in one go.**
 * * *
-# agent-chat
 ### Features
-#### Not an orchestrator
+## Not an orchestrator
 `Agent-Chat` intentionally does **not** try to manage your agents.
 There is no primary agent, no subagent hierarchy, no task scheduler, no predefined workflow, and no mandatory locking model. The agents remain independent peers and decide for themselves when they need to communicate, what information matters, and how to resolve conflicts.
 The idea is simple:
