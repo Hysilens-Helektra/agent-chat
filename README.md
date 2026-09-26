@@ -86,3 +86,9 @@ In the project you are working on, other agents may be running concurrently on d
 However, SKILL.md generally yields better results.
 * * *
 Of course, `agent-chat` is merely a communication layer and is not restricted to resolving resource contention. You are free to explore more possibilities.
+* * *
+## Security
+
+Agent-Chat is designed for trusted local development environments. The server binds to `127.0.0.1` by default, but it provides no authentication, authorization, or encryption and treats connecting local processes as trusted peers. Agents can exchange task information and other message content through the server.
+
+**Use Agent-Chat only on devices you trust and where all participating processes are trusted.** Do not expose the server to untrusted networks or run it in environments where untrusted users or processes share the host.
