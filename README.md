@@ -27,7 +27,7 @@ You come up with a feature and start Pi instance 1. While instance 1 is still wo
 
 #### Requirements
 - `@earendil-works/pi-coding-agent`
-- No additional dependencies!
+- No additional dependencies
 
 #### Steps
 1. Clone the project onto your machine.
