@@ -1,5 +1,5 @@
 ---
-name: muti-agent
+name: multi-agent
 description: Use the agent-chat tool group to communicate with other agents to avoid conflicts or to coordinate work when operating on the same machine. Use this when the user requests it or when you encounter errors that do not appear to be caused by your own actions.
 ---
 Other agents may be running concurrently with you.

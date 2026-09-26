@@ -37,8 +37,8 @@ You come up with a feature and start Pi instance 1. While instance 1 is still wo
 cd
 git clone https://github.com/Hysilens-Helektra/agent-chat.git
 ln -s ~/agent-chat/agent-chat.ts ~/.pi/agent/extensions/agent-chat.ts    # This example links to Pi's global config (recommended). You can also configure it at the project level.
-mkdir -p ~/.agents/skills/muti-agent/
-ln -s ~/agent-chat/SKILL.md ~/.agents/skills/muti-agent/SKILL.md
+mkdir -p ~/.agents/skills/multi-agent/
+ln -s ~/agent-chat/SKILL.md ~/.agents/skills/multi-agent/SKILL.md
 ```
 optional:
 ```bash
@@ -77,7 +77,7 @@ If you prefer not to clone into `$HOME`, or want to customize the port:
 
 ### Tips
 
-After an agent loads this tool, it does not automatically know to use it for conflict avoidance. Therefore, when starting a task, you should type `/muti-agent` or something similar to make the agent load the skill. You can also write the requirement to load this skill into your system prompt, so you won't need to type it manually every time.
+After an agent loads this tool, it does not automatically know to use it for conflict avoidance. Therefore, when starting a task, you should type `/multi-agent` or something similar to make the agent load the skill. You can also write the requirement to load this skill into your system prompt, so you won't need to type it manually every time.
 
 If you prefer not to use SKILL, you can also use a simple prompt:
 ```text
